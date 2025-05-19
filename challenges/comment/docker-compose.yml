@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    image: comment:latest # 可随意, 但最好和项目相关
+
+# 是否保留容器?
+    container_name: challenge-${CHALLENGE_NAME}-${ID} # 只能按照这样的格式 challenge-${name}-${ID}
+    environment:
+      - FLAG=${FLAG}
+    ports: # 请使用内部网络, 仅仅暴露 一个外网端口
+      - "0:80"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+
+  # docker-compose -p ${ID}-${CHALLENGE_NAME} up -d
+  # docker-compose -p ${ID}-${CHALLENGE_NAME} down -v --timeout=1
+  # docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{(index $conf 0).HostPort}}{{end}}' challenge-comment-${ID}
