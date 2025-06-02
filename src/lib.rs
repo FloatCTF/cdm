@@ -21,6 +21,7 @@ pub struct ChallengeDockerConfig {
     pub description: String,
     pub attachments: Vec<String>,
     pub is_dynamic_flag: bool,
+    pub is_dockerd: bool,
     pub points: i32,
 }
 
@@ -112,6 +113,9 @@ impl ChallengeDockerManager {
     }
 
     pub fn build(&self) -> Result<(), String> {
+        if !self.challenge_docker_config.is_dockerd {
+            return Ok(());
+        }
         ChallengeDockerManager::run_command(
             "docker-compose",
             &[
@@ -119,13 +123,22 @@ impl ChallengeDockerManager {
                 &self.docker_compose_yml.to_string_lossy(),
                 "build",
             ],
-            None,
+            Some({
+                let mut env_vars = HashMap::new();
+                env_vars.insert("ID", "0".into());
+                env_vars
+            }),
         )?;
         Ok(())
     }
 
     // return the map port
     pub fn up(&self, flag: String) -> Result<u64, String> {
+        // handle the misc crypto reverse
+        if !self.challenge_docker_config.is_dockerd {
+            return Ok(0);
+        }
+
         let mut env_vars = HashMap::new();
         if self.challenge_docker_config.is_dynamic_flag {
             env_vars.insert("FLAG", flag.as_str());
@@ -165,6 +178,10 @@ impl ChallengeDockerManager {
     }
 
     pub fn down(&self) -> Result<(), String> {
+        if !self.challenge_docker_config.is_dockerd {
+            return Ok(());
+        }
+
         ChallengeDockerManager::run_command(
             "docker-compose",
             &[

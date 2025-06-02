@@ -2,9 +2,11 @@ name = "comment"                              # 需与 目录名 一致
 author = "fb0sh@outlook.com"
 category = "Web"                              # 分类 ["Web", "Misc", "Pwn", "Reverse","Crypto"]
 tags = ["comment", "easy"]
-description = ""                              # 描述
+description = "注释里面有什么呢？"                     # 描述
 attachments = ["comment-019685ec0652769.zip"] # 没有留空
 is_dynamic_flag = true
+is_dockerd = true
+points = 300
 # import时都要build, 不关心 image_name
 # port 不需要关心
 # 静态flag 存放于 .env 动态flag则 .env不存在
